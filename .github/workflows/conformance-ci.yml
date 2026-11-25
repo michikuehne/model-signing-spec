@@ -30,9 +30,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install model-signing (Python reference implementation)
-        # pyOpenSSL: the current model-signing release imports it without declaring it;
-        # drop after the release that includes sigstore/model-transparency#686.
-        run: pip install model-signing pyOpenSSL
+        # pyOpenSSL, certifi: model-signing 1.1.1 imports both (in
+        # _signing/sign_certificate.py) without declaring them. certifi used to
+        # arrive transitively via requests, but sigstore>=4.6 / id>=1.6 no longer
+        # pull requests in. Drop pyOpenSSL after the release that includes
+        # sigstore/model-transparency#686, and certifi once it is declared upstream.
+        run: pip install model-signing pyOpenSSL certifi
 
       - name: Make selftest-client executable
         run: chmod +x conformance/selftest-client
